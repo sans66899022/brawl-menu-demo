@@ -93,9 +93,9 @@ class FloatingMenuService : Service() {
                 else -> true
             }
         }
-        addToggle(container, "Menu option 1")
-        addToggle(container, "Menu option 2")
-        addToggle(container, "Menu option 3")
+        addToggle(container, "Auto Dodge — UNAVAILABLE")
+        addToggle(container, "Auto Attack — UNAVAILABLE")
+        addToggle(container, "Demo switch 3")
         container.addView(Button(this).apply {
             text = "Close menu"
             setOnClickListener { stopSelf() }
@@ -104,7 +104,7 @@ class FloatingMenuService : Service() {
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
@@ -116,14 +116,20 @@ class FloatingMenuService : Service() {
     }
 
     private fun addToggle(parent: LinearLayout, label: String) {
+        val automationUnavailable = label.contains("UNAVAILABLE")
         parent.addView(Switch(this).apply {
             text = label
             textSize = 14f
-            setTextColor(Color.WHITE)
+            setTextColor(if (automationUnavailable) Color.LTGRAY else Color.WHITE)
             setPadding(4, 8, 4, 8)
-            setOnCheckedChangeListener { _, checked ->
-                val state = if (checked) "ON" else "OFF"
-                Toast.makeText(this@FloatingMenuService, "$label: $state", Toast.LENGTH_SHORT).show()
+            if (automationUnavailable) {
+                isEnabled = false
+                alpha = 0.65f
+            } else {
+                setOnCheckedChangeListener { _, checked ->
+                    val state = if (checked) "ON" else "OFF"
+                    Toast.makeText(this@FloatingMenuService, "$label: $state", Toast.LENGTH_SHORT).show()
+                }
             }
         })
     }
