@@ -1,16 +1,15 @@
-# Undertale Level 99 — Android floating-menu demo
+# Undertale Equipment Menu — Android demo
 
-A standalone Android UI demo with a draggable floating panel.
+A standalone Android floating-menu demo with a draggable panel and a tap-to-reopen floating **U** button.
 
-## Demo controls
-- Displayed level control (sets the local demo display to LV 99)
-- EXP slider
-- HP slider
-- Reset demo stats
-- Close menu
+## Menu controls
+- Hide the panel; tap the floating **U** button to show it again.
+- Cycle through the available demo weapon choices.
+- Cycle through the available demo defense/armor choices.
+- Close the floating menu.
 
 ## Important limitation
-This is a standalone visual/demo utility. It does not modify Undertale, edit its save files, inject into the game, change actual in-game stats, or interact with gameplay. All values exist only inside this demo and reset when the service/app is restarted.
+This is a standalone visual demo. It does not modify Undertale, edit save files, inject into the game, or change actual in-game equipment. The selected items are displayed only inside this demo.
 
 ## Build
-The GitHub Actions workflow builds a debug APK. Open the repository's Actions tab, select **Build Android APK**, and download the APK artifact after a successful run.
+The GitHub Actions workflow builds a debug APK when changes are pushed to the `main` branch. Open the repository's Actions tab, select **Build Android APK**, and download the APK artifact after a successful run.
