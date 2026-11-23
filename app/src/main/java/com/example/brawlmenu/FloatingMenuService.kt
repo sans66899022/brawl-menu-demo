@@ -54,7 +54,7 @@ class FloatingMenuService : Service() {
         }
         val notification = builder
             .setContentTitle("Brawl Menu Demo")
-            .setContentText("Floating menu is running")
+            .setContentText("Manual practice companion is running")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentIntent(openApp)
             .setOngoing(true)
@@ -69,12 +69,21 @@ class FloatingMenuService : Service() {
             setBackgroundColor(Color.rgb(31, 39, 63))
         }
         val header = TextView(this).apply {
-            text = "BRAWL MENU  •  DRAG HERE"
+            text = "BRAWL PRACTICE  •  DRAG HERE"
             textSize = 14f
             setTextColor(Color.WHITE)
             setPadding(4, 6, 4, 14)
         }
         container.addView(header)
+
+        val status = TextView(this).apply {
+            text = "Choose a practice tool. No live game detection."
+            textSize = 12f
+            setTextColor(Color.LTGRAY)
+            setPadding(4, 2, 4, 10)
+        }
+        container.addView(status)
+
         header.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -93,13 +102,35 @@ class FloatingMenuService : Service() {
                 else -> true
             }
         }
-        addToggle(container, "Auto Dodge — UNAVAILABLE")
-        addToggle(container, "Auto Attack — UNAVAILABLE")
-        addToggle(container, "Demo switch 3")
+
+        addTrainerToggle(
+            container,
+            "Dodge Practice",
+            "ON: Watch enemy wind-ups and practise moving sideways.",
+            "OFF: Dodge practice paused.",
+            status
+        )
+        addTrainerToggle(
+            container,
+            "Aim Practice",
+            "ON: Track a moving target and lead your manual shot.",
+            "OFF: Aim practice paused.",
+            status
+        )
+
+        val note = TextView(this).apply {
+            text = "Practice prompts only. You control movement, aiming and attacks."
+            textSize = 11f
+            setTextColor(Color.LTGRAY)
+            setPadding(4, 8, 4, 8)
+        }
+        container.addView(note)
+
         container.addView(Button(this).apply {
             text = "Close menu"
             setOnClickListener { stopSelf() }
         })
+
         params = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -115,21 +146,21 @@ class FloatingMenuService : Service() {
         windowManager.addView(container, params)
     }
 
-    private fun addToggle(parent: LinearLayout, label: String) {
-        val automationUnavailable = label.contains("UNAVAILABLE")
+    private fun addTrainerToggle(
+        parent: LinearLayout,
+        label: String,
+        enabledMessage: String,
+        disabledMessage: String,
+        status: TextView
+    ) {
         parent.addView(Switch(this).apply {
             text = label
             textSize = 14f
-            setTextColor(if (automationUnavailable) Color.LTGRAY else Color.WHITE)
+            setTextColor(Color.WHITE)
             setPadding(4, 8, 4, 8)
-            if (automationUnavailable) {
-                isEnabled = false
-                alpha = 0.65f
-            } else {
-                setOnCheckedChangeListener { _, checked ->
-                    val state = if (checked) "ON" else "OFF"
-                    Toast.makeText(this@FloatingMenuService, "$label: $state", Toast.LENGTH_SHORT).show()
-                }
+            setOnCheckedChangeListener { _, checked ->
+                status.text = if (checked) enabledMessage else disabledMessage
+                Toast.makeText(this@FloatingMenuService, status.text, Toast.LENGTH_SHORT).show()
             }
         })
     }
